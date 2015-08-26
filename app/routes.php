@@ -11,7 +11,17 @@
 |
 */
 
+function routes_path() {
+	return base_path() .'/src/Syllashare/Resources/Http/routes';
+}
+
 Route::get('/', function()
 {
 	return View::make('hello');
 });
+
+/**
+ * auth routes
+ */
+
+require routes_path(). '/Auth/auth.php';

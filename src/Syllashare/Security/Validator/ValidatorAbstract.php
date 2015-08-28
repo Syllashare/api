@@ -61,6 +61,14 @@ abstract class ValidatorAbstract
 	}
 
 	/**
+	 * magic get method will resolve a property from the input var
+	 */
+	public function __get($property)
+	{
+		return $this->input[$property];
+	}
+
+	/**
 	 * This method will run the validation and normalization on the rawInput
 	 * from the server. 
 	 * @param 1 $array of input 'key' => 'value'
@@ -97,8 +105,12 @@ abstract class ValidatorAbstract
 	 */
 	protected function normalize($key, $function)
 	{
-		// function should have a parameter of the key, and should return the value
-		$this->input[$key] = $function($this->rawInput[$key]);
+		if (!isset($this->input[$key])) {
+			$this->input[$key] = $function();
+		} else {
+			// function should have a parameter of the key, and should return the value
+			$this->input[$key] = $function($this->rawInput[$key]);
+		}
 	}
 
 	/**
@@ -169,4 +181,18 @@ abstract class ValidatorAbstract
 			$this->error = $validator->messages()->first();
 		}
 	}
+
+	/**
+	 * Makes an error on the validator
+	 * Sets success to false
+	 * @param Error String
+	 */	
+	public function throwError($string)
+	{	
+		$this->success = false;
+
+		$this->error = $string;
+	}
+
+
 }

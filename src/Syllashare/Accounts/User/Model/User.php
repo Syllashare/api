@@ -26,5 +26,20 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 */
 	protected $hidden = array('password');
 
-}
+	/**
+	 * getSchool() to get the school
+	 */
+	public function getSchool()
+	{
+		return $this->school;
+	}
 
+	/**
+	 * define the user->school relationship (belongsTo)
+	 */
+	public function school()
+	{
+		return $this->belongsTo('Syllashare\Component\School\Model\School');
+	}
+
+}

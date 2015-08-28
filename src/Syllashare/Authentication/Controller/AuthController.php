@@ -2,20 +2,21 @@
 
 namespace Syllashare\Authentication\Controller;
 
-use BaseController;
 use Syllashare\Accounts\User\Model\User;
 use Auth;
 use Input;
 use Hash;
 use Syllashare\Authentication\Validator\LoginValidator;
-
+use Syllashare\Authentication\Validator\RegisterValidator;
+use Syllashare\Security\Error\Error;
+use Syllashare\Core\Controller\CoreController;
 /**
  * This class handles all requests related to user authentication
  * i.e. login and register
  * @author Elliot Anderson <elliot@booksmart.it>
  */
 
-class AuthController extends BaseController
+class AuthController extends CoreController
 {
 	/**
 	 * @var loginValidator
@@ -23,25 +24,23 @@ class AuthController extends BaseController
 	 */
 	protected $loginValidator;
 
-	public function __construct(LoginValidator $loginValidator)
-	{
-		$this->loginValidator = $loginValidator;
-	}
+	/**
+	* @var registerValidator
+	* service to validate the registration input
+	*/
+	protected $registerValidator;
 
 	/**
 	 * handleLogin
 	 */
 	public function handleLogin()
-	{		
+	{
+		$this->loginValidator = new LoginValidator();
 
 		$validator = $this->loginValidator->validate();
 
 		if ($validator->failed()) {
-			$error = new \stdClass;
-			$error->error = $validator->getError();
-
-			// authentication failed
-			return json_encode($error);
+			return new Error($validator->getError());
 		}
 
 		$input = $validator->getInput();
@@ -49,30 +48,62 @@ class AuthController extends BaseController
 		$email = $input['email'];
 		$password = $input['password'];
 
-
-		if (Auth::attempt(array('email' => $email, 'password' => $password)))
-		{
-		    $user = Auth::user();
-
-		    return $user->toJson();
+		if ($this->attemptLogin($email, $password)) {
+			return $this->auth->getUser()->toJson();
 		}
 
-		$error = new \stdClass;
-		$error->error = 'Invalid Credentials';
+		return new Error('Invalid Credentials');
+	}
 
-		// authentication failed
-		return json_encode($error);
+	/**
+	 * This method will attempt the login with the credentials
+	 * @param 1 -> String email
+	 * @param 2 -> String password
+	 * @return true or false
+	 */
+	private function attemptLogin($email, $password)
+	{
+		if (Auth::attempt(array('email' => $email, 'password' => $password)))
+		{
+		    $this->auth->refreshUser();
+
+		    return true;
+		}
+
+		return false;
 	}
 
 	public function handleRegister()
 	{
+		$this->registerValidator = new RegisterValidator();
+
+		$validator = $this->registerValidator->validate();
+
+		if ($validator->failed()) {
+			return new Error($validator->getError());		
+		}
+
+		$input = $validator->getInput();
+
+		$valid_email = [];
+
+		$valid = preg_match("/^[a-zA-Z0-9]*@germantownfriends.org/", $input['email'], $valid_email);
+
+		if (!$valid) {
+			return new Error("We are only accepting Germantown Friends emails at this time");
+		}
+
 		$user = new User;
-		$user->first_name = Input::get('first_name');
-		$user->last_name = Input::get('last_name');
-		$user->email = Input::get('email');
-		$user->password = Hash::make(Input::get('password'));
-		$user->auth_key = Hash::make(Input::get('first_name').' '.Input::get('password'));
-		$user->graduating_year = '2017';
+		$user->first_name = $input['first_name'];
+		$user->last_name = $input['last_name'];
+		$user->email = $input['email'];
+		$user->password = $input['password'];
+		$user->auth_key = $input['auth_key'];
+		$user->graduating_year = $input['graduating_year'];
 		$user->save();
+
+		$input['school']->users()->save($user);
+
+		return json_encode(array('success' => 'User Successfully created!'));    
 	}
 }

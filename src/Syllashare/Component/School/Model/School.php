@@ -34,4 +34,12 @@ class School extends Eloquent
 	{
 		return $this->email_domain;
 	} 
+
+	/**
+	 * getter for years relationship
+	 */
+	public function getYears()
+	{
+		return $this->years;
+	}
 }	

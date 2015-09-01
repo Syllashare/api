@@ -12,3 +12,4 @@
 */
 
 Artisan::add(new CreateGFSCommand);
+Artisan::add(new CreateGFSWeekSchedule);

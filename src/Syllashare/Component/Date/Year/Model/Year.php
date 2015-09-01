@@ -11,7 +11,7 @@ use Eloquent;
  * @author Elliot Anderson <elliot@booksmart.it>
  */
 
-class Year
+class Year extends Eloquent
 {
 	/**
 	 * belongsTo School object
@@ -37,9 +37,19 @@ class Year
 		return $this->belongsTo('Syllashare\Component\Date\Day\Model\Day', 'start_day');
 	}
 
+	public function endDay()
+	{
+		return $this->belongsTo('Syllashare\Component\Date\Day\Model\Day', 'end_day');
+	}
+
 	public function weekSchedules()
 	{
-		return $this->hasMany('Syllashare\Component\Schedule\Week\Model\WeekSchedule', 'week_schedule_id');
+		return $this->hasMany('Syllashare\Component\Schedule\Week\Model\WeekSchedule');
+	}
+
+	public function getActiveWeekSchedule()
+	{
+		return $this->weekSchedules()->where('active', true)->first();
 	}
 }
 

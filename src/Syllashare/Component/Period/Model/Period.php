@@ -11,6 +11,11 @@ class Period extends Eloquent
 	 */ 
 	public function daySchedule()
 	{
-		return $this->belongsTo('Syllashare\Component\Schedule\Day\DaySchedule\Model\DaySchedule');
+		return $this->belongsToMany('Syllashare\Component\Schedule\Day\DaySchedule\Model\DaySchedule');
+	}
+
+	public function users()
+	{
+		return $this->belongsToMany('Syllashare\Accounts\User\Model\User', 'day_schedule_period', 'day_schedule_id', 'period_id');
 	}
 }

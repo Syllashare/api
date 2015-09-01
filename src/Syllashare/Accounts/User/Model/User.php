@@ -42,4 +42,9 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $this->belongsTo('Syllashare\Component\School\Model\School');
 	}
 
+	public function periods()
+	{
+		return $this->belongsToMany('Syllashare\Component\Period\Model\Period');
+	}
+
 }

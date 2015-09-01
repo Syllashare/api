@@ -1,4 +1,4 @@
-<?php
+a<?php
 
 namespace Syllashare\Security\Validator;
 
@@ -44,7 +44,7 @@ abstract class ValidatorAbstract
 
 
 	/**
-	 * @var error
+	 * @var error String
 	 */
 	protected $error;
 
@@ -192,6 +192,17 @@ abstract class ValidatorAbstract
 		$this->success = false;
 
 		$this->error = $string;
+	}
+
+	/**
+	 * check to see if there is an error message
+	 * @return True/False
+	 */	
+	public function hasErrorMessage()
+	{
+		if (is_null($this->error)) return false;
+
+		return true;
 	}
 
 

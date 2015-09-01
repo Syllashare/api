@@ -28,7 +28,7 @@ return array(
 	|
 	*/
 
-	'model' => 'User',
+	'model' => 'Syllashare\Accounts\User\Model\User',
 
 	/*
 	|--------------------------------------------------------------------------

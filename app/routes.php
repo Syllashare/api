@@ -25,3 +25,15 @@ Route::get('/', function()
  */
 
 require routes_path(). '/Auth/auth.php';
+
+/**
+ * schedule routes
+ */
+
+require routes_path(). '/Schedule/schedule.php';
+
+/**
+ * period routes
+ */
+ 
+ require routes_path(). '/Period/period.php';

@@ -4,6 +4,7 @@ namespace Syllashare\Component\Period\Validator;
 
 use Syllashare\Security\Validator\ValidatorAbstract;
 use Illuminate\Support\Collection;
+use Syllashare\Component\Period\Model\Period;
 
 class PeriodValidator extends ValidatorAbstract
 {
@@ -14,8 +15,10 @@ class PeriodValidator extends ValidatorAbstract
 
 	public function __construct()
 	{
-		$this->normalize('periods', function($periods)
-		{
+		parent::__construct();
+
+		$this->normalize('periods', function($periods) {
+
 			$normalized_periods = new Collection;
 
 			foreach ($periods as $period) {
@@ -25,7 +28,7 @@ class PeriodValidator extends ValidatorAbstract
 					$this->throwError('Invalid Period Input');
 				}
 
-				$normalized_periods->add($period);
+				$normalized_periods->push($period);
 			}
 
 			return $normalized_periods;

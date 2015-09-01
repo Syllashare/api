@@ -4,6 +4,7 @@ namespace Syllashare\Component\Period\Controller;
 
 use Syllashare\Core\Controller\CoreController;
 use Syllashare\Component\Period\Validator\PeriodValidator;
+use Syllashare\Security\Error\Error;
 
 class PeriodController extends CoreController
 {	
